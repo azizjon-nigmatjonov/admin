@@ -1,0 +1,71 @@
+import { TextField } from "@mui/material"
+import { makeStyles } from "@mui/styles"
+import { Controller } from "react-hook-form"
+import InputMask from "react-input-mask"
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
+
+const HFTextFieldWithMask = ({
+  control,
+  name = "",
+  isBlackBg = false,
+  isFormEdit = false,
+  disabledHelperText = false,
+  required = false,
+  rules = {},
+  mask,
+  disabled,
+  placeholder,
+  ...props
+}) => {
+  const classes = useStyles()
+  return (
+    <Controller
+      control={control}
+      name={name}
+      defaultValue=""
+      rules={{
+        required: required ? "This is required field" : false,
+        ...rules,
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <InputMask
+          mask={mask}
+          value={value ?? undefined}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+        >
+          {(inputProps) => (
+            <TextField
+              size="small"
+              name={name}
+              error={error}
+              helperText={!disabledHelperText && error?.message}
+              placeholder={placeholder}
+              className={isFormEdit ? "custom_textfield" : ""}
+              {...props}
+              InputProps={{
+                ...inputProps,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
+                style: {
+                  background: isBlackBg ? "#2A2D34" : "",
+                  color: isBlackBg ? "#fff" : "",
+                },
+              }}
+            />
+          )}
+        </InputMask>
+      )}
+    ></Controller>
+  )
+}
+
+export default HFTextFieldWithMask
